@@ -79,53 +79,47 @@
   }
 
   function convertToJSON(obj) {
-    const result = {};
-    console.log("converting", obj, getAllObjectKeys(obj));
+    console.log("converting", obj);
 
-    for (const key of getAllObjectKeys(obj)) {
-      console.log("looping", obj, key, obj[key]);
-      let value = obj[key];
-
-      if (value === undefined) {
-        result[key] = null;
-      }
-
-      try {
-        if ("buffer" in value && value.buffer instanceof ArrayBuffer) {
-          value = value.buffer;
-        }
-      } catch {}
-
-      if (value instanceof ArrayBuffer) {
-        result[key] = btoa(
-          String.fromCharCode.apply(null, new Uint8Array(value))
-        );
-        continue;
-      }
-
-      if (value instanceof Array) {
-        result[key] = value.map(convertToJSON);
-        continue;
-      }
-
-      if (typeof value === "object") {
-        result[key] = convertToJSON(value);
-        continue;
-      }
-
-      if (typeof value === "function") {
-        try {
-          result[key] = convertToJSON(value.bind(obj)());
-        } catch {
-          result[key] = null;
-        }
-        continue;
-      }
-
-      result[key] = value;
+    if (obj === undefined || obj === null) {
+      return null;
     }
 
-    return result;
+    try {
+      if ("buffer" in obj && obj.buffer instanceof ArrayBuffer) {
+        obj = obj.buffer;
+      }
+    } catch {}
+
+    if (obj instanceof ArrayBuffer) {
+      return btoa(String.fromCharCode.apply(null, new Uint8Array(obj)));
+    }
+
+    if (obj instanceof Array) {
+      return obj.map(convertToJSON);
+    }
+
+    if (typeof obj === "object") {
+      const result = {};
+      for (const key of getAllObjectKeys(obj)) {
+        console.log("looping", obj, key, obj[key]);
+        let value = obj[key];
+
+        if (typeof value === "function") {
+          try {
+            result[key] = convertToJSON(value.bind(obj)());
+          } catch {
+            result[key] = null;
+          }
+          continue;
+        }
+
+        result[key] = convertToJSON(value);
+      }
+      return result;
+    }
+
+    return obj;
   }
 
   function convertErrorToJSON(error) {
