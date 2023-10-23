@@ -2,5 +2,30 @@
   <h1>Data analysis</h1>
   <p class="lead">Transfer collected data here to start the analysis</p>
 
-  <p class="col-lg-6 col-md-8">Not yet implemented</p>
+  <div class="accordion" id="data-accordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#data-collapse"
+          aria-expanded="true"
+          aria-controls="data-collapse"
+        >
+          Input
+        </button>
+      </h2>
+      <div
+        id="data-collapse"
+        class="accordion-collapse collapse show"
+        data-bs-parent="#data-accordion"
+      >
+        <div class="accordion-body">
+          <p>Paste data here to being analysis</p>
+          <textarea class="data-input"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
