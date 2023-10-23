@@ -16,13 +16,13 @@ const routes: Routes = [
         (m) => m.DataCollectionComponent
       ),
   },
-  // {
-  //   path: 'prf-demo',
-  //   loadComponent: () =>
-  //     import('./pages/analysis/data-collection/data-collection.component').then(
-  //       (m) => m.DataCollectionComponent
-  //     ),
-  // },
+  {
+    path: 'prf-demo',
+    loadComponent: () =>
+      import('./pages/prf-demo/prf-demo.component').then(
+        (m) => m.PrfDemoComponent
+      ),
+  },
   {
     path: 'analyze',
     redirectTo: '/analyze/analysis',

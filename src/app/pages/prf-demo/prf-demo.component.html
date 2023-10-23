@@ -1,0 +1,118 @@
+<!--
+  Imported from a separate vanilla JS demo
+  TODO: Rewrite in angular/ts
+-->
+
+<div class="page-container container-md">
+  <div class="main-content">
+    <h1>WebAuthn PRF Demo</h1>
+    <p class="lead">
+      WebAuthn Pseudo Random Function (PRF) extension demonstration.
+    </p>
+    <h3>Instructions</h3>
+    <p>
+      Complete each step in order. Results from each step will automatically be
+      transferred to the next step. You can also manually enter values into the
+      fields if you have them saved from previous runs.
+    </p>
+
+    <h3>Steps</h3>
+    <div class="card mb-3">
+      <h5 class="card-header p-3">Step 1: Create credential</h5>
+      <div class="card-body">
+        <p class="card-text">
+          <b>Note:</b> This step can be skipped if you've already created a
+          credential
+        </p>
+        <div class="mb-3">
+          <label class="form-label">Authenticator attachment</label>
+          <select id="attachment" class="form-control">
+            <option value="null">Unspecified</option>
+            <option value="platform">
+              Platform (Apple Keychain, Windows Hello, etc.)
+            </option>
+            <option value="cross-platform">
+              Cross-platform (Yubikey, Android over BLE using QR, etc.)
+            </option>
+          </select>
+          <div class="form-text">
+            Only change this if some authenticator options are not being
+            provided to you by your browser
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Discoverable</label>
+          <select id="discoverable" class="form-control">
+            <option value="null">Unspecified</option>
+            <option value="required">Yes (might be synced)</option>
+            <option value="discouraged">No</option>
+          </select>
+          <div class="form-text">
+            Only change this if you want to test a specific storage mode, e.g.
+            testing if synced credentials support PRF across devices
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="runWithDOMOutput(createCredential, '#create-credential')"
+        >
+          Create
+        </button>
+      </div>
+      <div id="create-credential" class="d-none"></div>
+    </div>
+
+    <div class="card mb-3">
+      <h5 class="card-header p-3">Step 2: Create encryption key</h5>
+      <div class="card-body">
+        <p class="card-text">
+          This step uses an existing credential to (re-)create an encryption key
+          using a well known salt value
+        </p>
+        <div class="mb-3">
+          <label class="form-label">Credential ID</label>
+          <input id="credential" type="text" class="form-control" />
+          <div class="form-text">Leave empty for discoverable keys</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Salt</label>
+          <input
+            id="salt"
+            type="text"
+            class="form-control"
+            value="prf-demo-encryption-salt"
+          />
+        </div>
+        <button
+          type="button"
+          class="btn btn-primary"
+          onclick="runWithDOMOutput(createKey, '#create-key')"
+        >
+          Create
+        </button>
+      </div>
+      <div id="create-key" class="d-none"></div>
+    </div>
+
+    <div class="card mb-3">
+      <h5 class="card-header p-3">Result</h5>
+      <div class="card-body">
+        <div class="prf-alert prf-success d-none">
+          <div class="alert alert-success" role="alert">
+            Success, PRF is supported on your platform
+          </div>
+        </div>
+        <div class="prf-alert prf-fail d-none">
+          <div class="alert alert-danger" role="alert">
+            Failed, PRF is not supported on your platform
+          </div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Base64-URL encoded encryption key</label>
+          <input id="encryption-key" type="text" class="form-control" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
