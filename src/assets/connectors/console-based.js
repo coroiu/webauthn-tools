@@ -79,8 +79,6 @@
   }
 
   function convertToJSON(obj) {
-    console.log("converting", obj);
-
     if (obj === undefined || obj === null) {
       return null;
     }
@@ -102,7 +100,6 @@
     if (typeof obj === "object") {
       const result = {};
       for (const key of getAllObjectKeys(obj)) {
-        console.log("looping", obj, key, obj[key]);
         let value = obj[key];
 
         if (typeof value === "function") {
