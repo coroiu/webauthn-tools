@@ -30,7 +30,9 @@
   </div>
 
   <ng-container *ngIf="data$ | async as data">
-    <h2>Options</h2>
-    <app-options class="mb-5" [options]="data.options.publicKey"></app-options>
+    <h2>Data</h2>
+    <pre><code>{{ data | json }}</code></pre>
+    <!-- <h2>Options</h2>
+    <app-options class="mb-5" [options]="data.options.publicKey"></app-options> -->
   </ng-container>
 </div>
