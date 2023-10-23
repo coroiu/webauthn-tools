@@ -3,22 +3,34 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
-    path: 'analysis',
+    path: 'analyze/analysis',
     loadComponent: () =>
-      import('./pages/analysis/analysis.component').then(
-        (m) => m.AnalysisComponent
+      import('./pages/analysis/analyze/analyze.component').then(
+        (m) => m.AnalyzeComponent
       ),
   },
   {
-    path: 'data-collection',
+    path: 'analyze/data-collection',
     loadComponent: () =>
-      import('./pages/data-collection/data-collection.component').then(
+      import('./pages/analysis/data-collection/data-collection.component').then(
         (m) => m.DataCollectionComponent
       ),
   },
+  // {
+  //   path: 'prf-demo',
+  //   loadComponent: () =>
+  //     import('./pages/analysis/data-collection/data-collection.component').then(
+  //       (m) => m.DataCollectionComponent
+  //     ),
+  // },
+  {
+    path: 'analyze',
+    redirectTo: '/analyze/analysis',
+    pathMatch: 'full',
+  },
   {
     path: '',
-    redirectTo: '/analysis',
+    redirectTo: '/analyze/analysis',
     pathMatch: 'full',
   },
 ];

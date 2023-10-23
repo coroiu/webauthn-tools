@@ -14,22 +14,44 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
-        <li class="nav-item">
+        <li class="nav-item dropdown">
           <a
-            class="nav-link"
-            routerLinkActive="active"
-            ariaCurrentWhenActive="page"
-            routerLink="/analysis"
-            >Analysis</a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
           >
+            Analysis
+          </a>
+          <ul class="dropdown-menu">
+            <li class="nav-item">
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                routerLink="/analyze/analysis"
+                >Analysis</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                routerLink="/analyze/data-collection"
+                >Data collection</a
+              >
+            </li>
+          </ul>
         </li>
         <li class="nav-item">
           <a
             class="nav-link"
             routerLinkActive="active"
             ariaCurrentWhenActive="page"
-            routerLink="/data-collection"
-            >Data collection</a
+            routerLink="/prf-demo"
+            >PRF Demo</a
           >
         </li>
       </ul>
