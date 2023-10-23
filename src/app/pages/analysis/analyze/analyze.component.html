@@ -2,7 +2,7 @@
   <h1>Data analysis</h1>
   <p class="lead">Transfer collected data here to start the analysis</p>
 
-  <div class="accordion" id="data-accordion">
+  <div class="accordion mb-5" id="data-accordion">
     <div class="accordion-item">
       <h2 class="accordion-header">
         <button
@@ -23,9 +23,14 @@
       >
         <div class="accordion-body">
           <p>Paste data here to being analysis</p>
-          <textarea class="data-input"></textarea>
+          <textarea class="data-input" (input)="readData($event)"></textarea>
         </div>
       </div>
     </div>
   </div>
+
+  <ng-container *ngIf="data$ | async as data">
+    <h2>Options</h2>
+    <app-options class="mb-5" [options]="data.options.publicKey"></app-options>
+  </ng-container>
 </div>
