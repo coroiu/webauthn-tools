@@ -1,3 +1,7 @@
 <ng-container *ngFor="let field of fields">
-  {{ field[0] }}: {{ field[1] }}
+  <app-field
+    [name]="field.name"
+    [data]="field.data"
+    [metadata]="field.metadata"
+  ></app-field>
 </ng-container>

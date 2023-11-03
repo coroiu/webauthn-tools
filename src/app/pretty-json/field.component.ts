@@ -7,6 +7,7 @@ import { JsonFieldMetadata } from './json-metadata';
   standalone: true,
 })
 export class FieldComponent<T> {
+  @Input({ required: true }) name!: string;
   @Input({ required: true }) data!: T;
   @Input({ required: true }) metadata!: JsonFieldMetadata<T>;
 }

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { JsonMetadata } from './json-metadata';
 import { CommonModule } from '@angular/common';
 import { FieldComponent } from './field.component';
+import { getFields } from './utils';
 
 @Component({
   selector: 'app-pretty-json',
@@ -10,11 +11,13 @@ import { FieldComponent } from './field.component';
   imports: [CommonModule, FieldComponent],
   standalone: true,
 })
-export class PrettyJsonComponent<T> {
+export class PrettyJsonComponent<T extends object> {
   @Input({ required: true }) data!: T;
   @Input({ required: true }) metadata!: JsonMetadata<T>;
 
   get fields() {
-    return Object.entries(this.data as any);
+    const fields = getFields(this.data, this.metadata);
+    console.log(fields);
+    return fields;
   }
 }

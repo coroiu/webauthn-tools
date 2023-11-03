@@ -40,6 +40,23 @@ export class AnalyzeComponent {
   getMetadata(
     data: WebAuthnChallengeResponse
   ): JsonMetadata<WebAuthnChallengeResponse> {
+    if (data.method === 'navigator.credentials.create') {
+      return {
+        method: {
+          genericDescription: 'This is a method used to create a new passkey',
+          fields: undefined,
+        },
+        options: {
+          fields: {
+            publicKey: {
+              genericDescription: 'WebAuthn options object',
+              fields: {} as any,
+            },
+          },
+        },
+      };
+    }
+
     if (data.method === 'navigator.credentials.get') {
       return {
         method: {
