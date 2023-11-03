@@ -62,6 +62,7 @@ export interface WebAuthnCreateOptionsUser {
 
 export interface WebAuthnOptionsPubKeyCredParam {
   type: 'public-key';
+  id: string;
   alg: number;
   transports?: ('usb' | 'nfc' | 'ble' | 'internal' | 'hybrid')[];
 }

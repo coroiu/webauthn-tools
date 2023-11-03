@@ -10,6 +10,7 @@ import { OptionsComponent } from '../../../options/options.component';
 import { CommonModule } from '@angular/common';
 import { PrettyJsonComponent } from '../../../pretty-json/pretty-json.component';
 import { JsonMetadata } from '../../../pretty-json/json-metadata';
+import { WebAuthnCreateMetadata } from './metadata';
 
 @Component({
   templateUrl: './analyze.component.html',
@@ -41,20 +42,7 @@ export class AnalyzeComponent {
     data: WebAuthnChallengeResponse
   ): JsonMetadata<WebAuthnChallengeResponse> {
     if (data.method === 'navigator.credentials.create') {
-      return {
-        method: {
-          genericDescription: 'This is a method used to create a new passkey',
-          fields: undefined,
-        },
-        options: {
-          fields: {
-            publicKey: {
-              genericDescription: 'WebAuthn options object',
-              fields: {} as any,
-            },
-          },
-        },
-      };
+      return WebAuthnCreateMetadata;
     }
 
     if (data.method === 'navigator.credentials.get') {

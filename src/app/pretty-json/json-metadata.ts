@@ -5,5 +5,9 @@ export type JsonMetadata<Data> = {
 export type JsonFieldMetadata<Data> = {
   genericDescription?: string;
   describe?: (value: Data) => string;
-  fields: Data extends object ? JsonMetadata<Data> : undefined;
+  fields: Data extends Array<infer U>
+    ? JsonMetadata<U>
+    : Data extends object
+    ? JsonMetadata<Data>
+    : undefined;
 };
