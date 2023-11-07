@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
   WebAuthnChallengeResponse,
   WebAuthnCreateChallengeResponse,
@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
 import { PrettyJsonComponent } from '../../../pretty-json/pretty-json.component';
 import { JsonMetadata } from '../../../pretty-json/json-metadata';
 import { WebAuthnCreateMetadata } from './metadata';
+import { ActivatedRoute } from '@angular/router';
+import { exampleData } from './example.data';
 
 @Component({
   templateUrl: './analyze.component.html',
@@ -18,8 +20,22 @@ import { WebAuthnCreateMetadata } from './metadata';
   imports: [CommonModule, FormsModule, OptionsComponent, PrettyJsonComponent],
   standalone: true,
 })
-export class AnalyzeComponent {
-  protected data$ = new Subject<WebAuthnChallengeResponse>();
+export class AnalyzeComponent implements OnInit, OnDestroy {
+  private activatedRoute = inject(ActivatedRoute);
+  private onDestroy$ = new Subject<void>();
+
+  protected data$ = new ReplaySubject<WebAuthnChallengeResponse>(1);
+
+  ngOnInit(): void {
+    this.activatedRoute.queryParams
+      .pipe(takeUntil(this.onDestroy$))
+      .subscribe((params) => {
+        console.log(params);
+        if ('example' in params) {
+          this.data$.next(decode(exampleData) as any);
+        }
+      });
+  }
 
   readData(data: Event) {
     if (
@@ -31,10 +47,9 @@ export class AnalyzeComponent {
     }
 
     try {
-      const decoded = atob(data.target.value.replaceAll(' ', ''));
-      const parsed = JSON.parse(decoded);
+      const parsed = decode(data.target.value.replaceAll(' ', ''));
       console.log(parsed);
-      this.data$.next(parsed);
+      this.data$.next(parsed as any);
     } catch {}
   }
 
@@ -64,4 +79,15 @@ export class AnalyzeComponent {
       return {} as any;
     }
   }
+
+  ngOnDestroy(): void {
+    this.onDestroy$.next();
+    this.onDestroy$.complete();
+  }
+}
+
+function decode(input: string): unknown {
+  const decoded = atob(input);
+  const parsed = JSON.parse(decoded);
+  return parsed;
 }
