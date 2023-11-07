@@ -8,7 +8,7 @@ export type JsonField<T> = {
 
 export function getFields<T extends object>(
   data: T,
-  metadata: JsonMetadata<T>
+  metadata?: JsonMetadata<T>
 ): Array<JsonField<T>> {
   const dataFields = Object.entries(data) as Array<[keyof T, T[keyof T]]>;
 
@@ -16,7 +16,7 @@ export function getFields<T extends object>(
     return {
       name: key,
       data: value,
-      metadata: metadata[key],
+      metadata: metadata?.[key],
     };
   }) as any;
 }

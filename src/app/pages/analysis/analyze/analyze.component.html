@@ -15,10 +15,10 @@
 
   <ng-container *ngIf="data$ | async as data">
     <h2>Data</h2>
-    <!-- <app-pretty-json
+    <app-pretty-json
       [data]="data"
       [metadata]="getMetadata(data)"
-    ></app-pretty-json> -->
-    <pre><code>{{ data | json }}</code></pre>
+    ></app-pretty-json>
+    <!-- <pre><code>{{ data | json }}</code></pre> -->
   </ng-container>
 </div>

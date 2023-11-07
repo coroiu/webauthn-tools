@@ -28,20 +28,20 @@ export class FieldComponent<T extends object> {
   }
 
   get objectFields() {
-    if (this.metadata?.fields === undefined || !isObject(this.data)) {
+    if (!isObject(this.data)) {
       return [];
     }
 
-    return getFields(this.data, this.metadata.fields as any);
+    return getFields(this.data, this.metadata?.fields as any);
   }
 
   get arrayFields() {
-    if (this.metadata?.fields === undefined || !isArray(this.data)) {
+    if (!isArray(this.data)) {
       return [];
     }
 
     return this.data.map((item) =>
-      getFields(item, this.metadata!.fields as any)
+      getFields(item, this.metadata?.fields as any)
     );
   }
 }
