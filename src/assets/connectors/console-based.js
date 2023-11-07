@@ -148,5 +148,6 @@
     return Array.from(keys.values());
   }
 
-  console.log("WebAuthn data collection enabled");
+  const successStr = "WebAuthn data collection enabled";
+  console.log(successStr);
 })();

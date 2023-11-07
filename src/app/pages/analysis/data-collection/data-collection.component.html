@@ -3,35 +3,46 @@
   <p class="lead">Instructions to gather data for analysis</p>
 
   <p class="col-lg-6 col-md-8">
-    Copy and paste the following code snippet into you browsers console to
-    activate the data collection. The collected data will be output to the
+    Copy and paste one of the following code snippets into you browsers console
+    to activate the data collection. The collected data will be output to the
     console. Transfer the collected data to the "Analysis" page for an in-depth
     analysis.
   </p>
 
-  <div class="accordion" id="collection-script-accordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button
-          class="accordion-button"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#collapseOne"
-          aria-expanded="true"
-          aria-controls="collapseOne"
-        >
-          Manual data collection script (console-based)
-        </button>
-      </h2>
-      <div
-        id="collapseOne"
-        class="accordion-collapse collapse show"
-        data-bs-parent="#collection-script-accordion"
-      >
-        <div class="accordion-body">
-          <code>{{ script$ | async }}</code>
-        </div>
-      </div>
-    </div>
-  </div>
+  <ng-container *ngIf="scripts$ | async as scripts">
+    <mat-accordion>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            >Manual data collection script (minified)</mat-panel-title
+          >
+          <mat-panel-description>Recommended</mat-panel-description>
+        </mat-expansion-panel-header>
+        <code>{{ scripts.minified }}</code>
+      </mat-expansion-panel>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            >Manual data collection script (base64-encoded)</mat-panel-title
+          >
+          <mat-panel-description
+            >Try this if minified does not work</mat-panel-description
+          >
+        </mat-expansion-panel-header>
+        <code>{{ scripts.b64 }}</code>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title
+            >Manual data collection script (raw source code)</mat-panel-title
+          >
+          <mat-panel-description>Advanced</mat-panel-description>
+        </mat-expansion-panel-header>
+        <code>
+          <pre>{{ scripts.raw }}</pre>
+        </code>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </ng-container>
 </div>
