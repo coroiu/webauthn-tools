@@ -1,24 +1,30 @@
 <ng-container *ngIf="isObject">
+  {{ name }}: {{ "{" }}
   <app-field
     *ngFor="let field of objectFields"
     [name]="field.name"
     [data]="field.data"
     [metadata]="field.metadata"
   ></app-field>
+  {{ "}" }},
 </ng-container>
 
 <ng-container *ngIf="isArray">
+  {{ name }}: [
   <ng-container *ngFor="let item of arrayFields">
-    <app-field
-      *ngFor="let field of item"
-      [name]="field.name"
-      [data]="field.data"
-      [metadata]="field.metadata"
-    ></app-field>
+    <div class="array-item">
+      {{ "{" }}
+      <app-field
+        *ngFor="let field of item"
+        [name]="field.name"
+        [data]="field.data"
+        [metadata]="field.metadata"
+      ></app-field>
+      {{ "}" }},
+    </div>
   </ng-container>
+  ]
 </ng-container>
 
-<ng-container *ngIf="isPrimitive">
-  {{ name }}: {{ data }} ({{ metadata?.genericDescription }})
-</ng-container>
+<ng-container *ngIf="isPrimitive"> {{ name }}: {{ data }} </ng-container>
 <br />

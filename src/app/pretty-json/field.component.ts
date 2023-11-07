@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-field',
   templateUrl: './field.component.html',
+  styleUrls: ['./field.component.scss'],
   imports: [CommonModule],
   standalone: true,
 })
@@ -15,7 +16,7 @@ export class FieldComponent<T extends object> {
   @Input({ required: true }) metadata?: JsonFieldMetadata<T>;
 
   get isObject() {
-    return isObject(this.data);
+    return !isArray(this.data) && isObject(this.data);
   }
 
   get isArray() {
