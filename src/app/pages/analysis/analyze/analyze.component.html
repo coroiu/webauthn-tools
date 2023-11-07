@@ -14,11 +14,17 @@
   </mat-expansion-panel>
 
   <ng-container *ngIf="data$ | async as data">
-    <h2>Data</h2>
+    <div class="data-header">
+      <h2>Data</h2>
+      <mat-slide-toggle [(ngModel)]="usePrettyJson"
+        >Pretty JSON</mat-slide-toggle
+      >
+    </div>
     <app-pretty-json
+      *ngIf="usePrettyJson"
       [data]="data"
       [metadata]="getMetadata(data)"
     ></app-pretty-json>
-    <!-- <pre><code>{{ data | json }}</code></pre> -->
+    <pre *ngIf="!usePrettyJson"><code>{{ data | json }}</code></pre>
   </ng-container>
 </div>

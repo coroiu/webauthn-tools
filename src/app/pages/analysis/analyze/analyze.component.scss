@@ -5,3 +5,10 @@ mat-form-field {
 mat-expansion-panel {
   margin-bottom: 2rem;
 }
+
+.data-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}

@@ -1,6 +1,7 @@
-import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatInputModule } from '@angular/material/input';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
@@ -25,6 +26,7 @@ import { exampleData } from './example.data';
     FormsModule,
     MatExpansionModule,
     MatInputModule,
+    MatSlideToggleModule,
     OptionsComponent,
     PrettyJsonComponent,
   ],
@@ -36,6 +38,7 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
 
   protected data$ = new ReplaySubject<WebAuthnChallengeResponse>(1);
   protected panelExpanded = true;
+  protected usePrettyJson = false;
 
   ngOnInit(): void {
     this.data$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
@@ -47,6 +50,7 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
       .subscribe((params) => {
         if ('example' in params) {
           this.data$.next(decode(exampleData) as any);
+          this.usePrettyJson = true;
         }
       });
   }
