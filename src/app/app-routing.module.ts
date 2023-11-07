@@ -25,12 +25,12 @@ const routes: Routes = [
   },
   {
     path: 'analyze',
-    redirectTo: '/analyze/analysis',
+    redirectTo: '/analyze/data-collection',
     pathMatch: 'full',
   },
   {
     path: '',
-    redirectTo: '/analyze/analysis',
+    redirectTo: '/analyze/data-collection',
     pathMatch: 'full',
   },
 ];
