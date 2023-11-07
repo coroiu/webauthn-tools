@@ -1,13 +1,15 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { JsonFieldMetadata } from './json-metadata';
-import { getFields, isArray, isObject } from './utils';
+import { JsonField, getFields, isArray, isObject } from './utils';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-field',
   templateUrl: './field.component.html',
   styleUrls: ['./field.component.scss'],
-  imports: [CommonModule],
+  imports: [CommonModule, MatTooltipModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
 })
 export class FieldComponent<T extends object> {
@@ -43,5 +45,13 @@ export class FieldComponent<T extends object> {
     return this.data.map((item) =>
       getFields(item, this.metadata?.fields as any)
     );
+  }
+
+  fieldName(_: number, field: JsonField<T>) {
+    return field.name;
+  }
+
+  index(index: number) {
+    return index;
   }
 }

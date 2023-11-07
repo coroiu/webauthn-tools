@@ -1,7 +1,11 @@
+<span class="field-name" [matTooltip]="metadata?.genericDescription ?? ''">{{
+  name
+}}</span
+>:
 <ng-container *ngIf="isObject">
-  {{ name }}: {{ "{" }}
+  {{ "{" }}
   <app-field
-    *ngFor="let field of objectFields"
+    *ngFor="let field of objectFields; trackBy: fieldName"
     [name]="field.name"
     [data]="field.data"
     [metadata]="field.metadata"
@@ -10,12 +14,12 @@
 </ng-container>
 
 <ng-container *ngIf="isArray">
-  {{ name }}: [
-  <ng-container *ngFor="let item of arrayFields">
+  [
+  <ng-container *ngFor="let item of arrayFields; trackBy: index">
     <div class="array-item">
       {{ "{" }}
       <app-field
-        *ngFor="let field of item"
+        *ngFor="let field of item; trackBy: fieldName"
         [name]="field.name"
         [data]="field.data"
         [metadata]="field.metadata"
@@ -26,5 +30,5 @@
   ]
 </ng-container>
 
-<ng-container *ngIf="isPrimitive"> {{ name }}: {{ data }} </ng-container>
+<ng-container *ngIf="isPrimitive"> {{ data }} </ng-container>
 <br />
