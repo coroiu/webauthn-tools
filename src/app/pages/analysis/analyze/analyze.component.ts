@@ -1,4 +1,7 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatInputModule } from '@angular/material/input';
+
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
   WebAuthnChallengeResponse,
@@ -17,7 +20,14 @@ import { exampleData } from './example.data';
 @Component({
   templateUrl: './analyze.component.html',
   styleUrls: ['./analyze.component.scss'],
-  imports: [CommonModule, FormsModule, OptionsComponent, PrettyJsonComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatExpansionModule,
+    MatInputModule,
+    OptionsComponent,
+    PrettyJsonComponent,
+  ],
   standalone: true,
 })
 export class AnalyzeComponent implements OnInit, OnDestroy {
@@ -25,12 +35,16 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   protected data$ = new ReplaySubject<WebAuthnChallengeResponse>(1);
+  protected panelExpanded = true;
 
   ngOnInit(): void {
+    this.data$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
+      this.panelExpanded = false;
+    });
+
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params) => {
-        console.log(params);
         if ('example' in params) {
           this.data$.next(decode(exampleData) as any);
         }

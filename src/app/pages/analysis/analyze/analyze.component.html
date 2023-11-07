@@ -2,32 +2,16 @@
   <h1>Data analysis</h1>
   <p class="lead">Transfer collected data here to start the analysis</p>
 
-  <div class="accordion mb-5" id="data-accordion">
-    <div class="accordion-item">
-      <h2 class="accordion-header">
-        <button
-          class="accordion-button"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#data-collapse"
-          aria-expanded="true"
-          aria-controls="data-collapse"
-        >
-          Input
-        </button>
-      </h2>
-      <div
-        id="data-collapse"
-        class="accordion-collapse collapse show"
-        data-bs-parent="#data-accordion"
-      >
-        <div class="accordion-body">
-          <p>Paste data here to being analysis</p>
-          <textarea class="data-input" (input)="readData($event)"></textarea>
-        </div>
-      </div>
-    </div>
-  </div>
+  <mat-expansion-panel [(expanded)]="panelExpanded">
+    <mat-expansion-panel-header>
+      <mat-panel-title>Data input</mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <p>Paste data here to begin analysis</p>
+    <mat-form-field>
+      <textarea matInput (input)="readData($event)"></textarea>
+    </mat-form-field>
+  </mat-expansion-panel>
 
   <ng-container *ngIf="data$ | async as data">
     <h2>Data</h2>
