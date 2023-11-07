@@ -84,7 +84,7 @@ export const WebAuthnCreateMetadata: JsonMetadata<WebAuthnCreateChallengeRespons
               },
             },
             rp: {
-              genericDescription: 'RP',
+              genericDescription: `This member contains a name and an identifier for the Relying Party responsible for the request. Its value’s name member is REQUIRED. See § 5.4.1 Public Key Entity Description (dictionary PublicKeyCredentialEntity) for further details. Its value’s id member specifies the RP ID the credential should be scoped to. If omitted, its value will be the CredentialsContainer object’s relevant settings object's origin's effective domain. See § 5.4.2 Relying Party Parameters for Credential Generation (dictionary PublicKeyCredentialRpEntity) for further details.`,
               fields: {
                 id: {
                   genericDescription: 'ID',
