@@ -1,2 +1,24 @@
-{{ name }}: {{ data }} ({{ metadata.genericDescription }})
+<ng-container *ngIf="isObject">
+  <app-field
+    *ngFor="let field of objectFields"
+    [name]="field.name"
+    [data]="field.data"
+    [metadata]="field.metadata"
+  ></app-field>
+</ng-container>
+
+<ng-container *ngIf="isArray">
+  <ng-container *ngFor="let item of arrayFields">
+    <app-field
+      *ngFor="let field of item"
+      [name]="field.name"
+      [data]="field.data"
+      [metadata]="field.metadata"
+    ></app-field>
+  </ng-container>
+</ng-container>
+
+<ng-container *ngIf="isPrimitive">
+  {{ name }}: {{ data }} ({{ metadata?.genericDescription }})
+</ng-container>
 <br />
