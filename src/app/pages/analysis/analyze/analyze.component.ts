@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
@@ -26,7 +27,8 @@ import { exampleData } from './example.data';
     FormsModule,
     MatExpansionModule,
     MatInputModule,
-    MatSlideToggleModule,
+    MatTooltipModule,
+    MatButtonToggleModule,
     OptionsComponent,
     PrettyJsonComponent,
   ],
@@ -36,9 +38,12 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private onDestroy$ = new Subject<void>();
 
-  protected data$ = new ReplaySubject<WebAuthnChallengeResponse>(1);
+  protected data$ = new ReplaySubject<{
+    raw: object;
+    decoded: WebAuthnChallengeResponse;
+  }>(1);
   protected panelExpanded = true;
-  protected usePrettyJson = false;
+  protected displayMode: 'raw' | 'decoded' | 'pretty' = 'decoded';
 
   ngOnInit(): void {
     this.data$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
@@ -49,8 +54,10 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params) => {
         if ('example' in params) {
-          this.data$.next(decode(exampleData) as any);
-          this.usePrettyJson = true;
+          const raw = read(exampleData);
+          const decoded = decode(raw);
+          this.data$.next({ raw, decoded });
+          this.displayMode = 'pretty';
         }
       });
   }
@@ -65,9 +72,9 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
     }
 
     try {
-      const parsed = decode(data.target.value.replaceAll(' ', ''));
-      console.log(parsed);
-      this.data$.next(parsed as any);
+      const raw = read(data.target.value.replaceAll(' ', ''));
+      const decoded = decode(raw);
+      this.data$.next({ raw, decoded });
     } catch {}
   }
 
@@ -104,8 +111,13 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   }
 }
 
-function decode(input: string): unknown {
+function read(input: string): object {
   const decoded = atob(input);
   const parsed = JSON.parse(decoded);
   return parsed;
+}
+
+function decode(input: object): WebAuthnChallengeResponse {
+  const decoded = input as WebAuthnChallengeResponse;
+  return decoded;
 }

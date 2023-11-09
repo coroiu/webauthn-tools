@@ -16,15 +16,32 @@
   <ng-container *ngIf="data$ | async as data">
     <div class="data-header">
       <h2>Data</h2>
-      <mat-slide-toggle [(ngModel)]="usePrettyJson"
-        >Pretty JSON</mat-slide-toggle
-      >
+      <mat-button-toggle-group name="display-mode" [(ngModel)]="displayMode">
+        <mat-button-toggle
+          value="raw"
+          matTooltip="Displays the raw captured data with minimal processing and no highlighting"
+          >Raw</mat-button-toggle
+        >
+        <mat-button-toggle
+          value="decoded"
+          matTooltip="Decodes the binary values into a human readable JSON format"
+          >Decoded</mat-button-toggle
+        >
+        <mat-button-toggle
+          value="pretty"
+          matTooltip="[WIP] Adds data highlighting with descriptions and explanations for each field"
+          >Pretty</mat-button-toggle
+        >
+      </mat-button-toggle-group>
     </div>
+    <pre *ngIf="displayMode == 'raw'"><code>{{ data.raw | json }}</code></pre>
+    <pre
+      *ngIf="displayMode == 'decoded'"
+    ><code>{{ data.decoded | json }}</code></pre>
     <app-pretty-json
-      *ngIf="usePrettyJson"
-      [data]="data"
-      [metadata]="getMetadata(data)"
+      *ngIf="displayMode == 'pretty'"
+      [data]="data.decoded"
+      [metadata]="getMetadata(data.decoded)"
     ></app-pretty-json>
-    <pre *ngIf="!usePrettyJson"><code>{{ data | json }}</code></pre>
   </ng-container>
 </div>
