@@ -36,12 +36,15 @@
     </div>
     <pre *ngIf="displayMode == 'raw'"><code>{{ data.raw | json }}</code></pre>
     <pre
-      *ngIf="displayMode == 'decoded'"
+      *ngIf="displayMode == 'decoded' && data.decoded"
     ><code>{{ data.decoded | json }}</code></pre>
     <app-pretty-json
-      *ngIf="displayMode == 'pretty'"
+      *ngIf="displayMode == 'pretty' && data.decoded"
       [data]="data.decoded"
       [metadata]="getMetadata(data.decoded)"
     ></app-pretty-json>
+    <ng-container *ngIf="data.decoded == undefined">
+      Unable to decode input
+    </ng-container>
   </ng-container>
 </div>

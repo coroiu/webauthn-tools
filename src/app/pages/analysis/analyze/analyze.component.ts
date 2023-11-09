@@ -42,7 +42,7 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
 
   protected data$ = new ReplaySubject<{
     raw: WebAuthnChallengeResponse;
-    decoded: DecodedWebAuthnChallengeResponse;
+    decoded: DecodedWebAuthnChallengeResponse | undefined;
   }>(1);
   protected panelExpanded = true;
   protected displayMode: 'raw' | 'decoded' | 'pretty' = 'decoded';
@@ -121,10 +121,15 @@ function read(input: string): WebAuthnChallengeResponse {
 
 function decode(
   input: WebAuthnChallengeResponse
-): DecodedWebAuthnChallengeResponse {
-  if (input.method === 'navigator.credentials.create') {
-    return decodeCreate(input);
-  }
+): DecodedWebAuthnChallengeResponse | undefined {
+  try {
+    if (input.method === 'navigator.credentials.create') {
+      return decodeCreate(input);
+    }
 
-  return input;
+    return input;
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 }
