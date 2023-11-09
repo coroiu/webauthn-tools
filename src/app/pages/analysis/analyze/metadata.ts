@@ -1,7 +1,7 @@
 import { JsonMetadata } from '../../../pretty-json/json-metadata';
-import { WebAuthnCreateChallengeResponse } from '../../../types/webauthn-challenge-response';
+import { DecodedWebAuthnCreateChallengeResponse } from '../../../types/webauthn-challenge-response';
 
-export const WebAuthnCreateMetadata: JsonMetadata<WebAuthnCreateChallengeResponse> =
+export const WebAuthnCreateMetadata: JsonMetadata<DecodedWebAuthnCreateChallengeResponse> =
   {
     method: {
       genericDescription: 'This is a method used to create a new passkey',
@@ -121,4 +121,5 @@ export const WebAuthnCreateMetadata: JsonMetadata<WebAuthnCreateChallengeRespons
         },
       },
     },
+    response: undefined as any,
   };

@@ -1,3 +1,6 @@
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatInputModule } from '@angular/material/input';
@@ -6,18 +9,17 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
+  DecodedWebAuthnChallengeResponse,
   WebAuthnChallengeResponse,
   WebAuthnCreateChallengeResponse,
   WebAuthnGetChallengeResponse,
 } from '../../../types/webauthn-challenge-response';
-import { FormsModule } from '@angular/forms';
 import { OptionsComponent } from '../../../options/options.component';
-import { CommonModule } from '@angular/common';
 import { PrettyJsonComponent } from '../../../pretty-json/pretty-json.component';
 import { JsonMetadata } from '../../../pretty-json/json-metadata';
 import { WebAuthnCreateMetadata } from './metadata';
-import { ActivatedRoute } from '@angular/router';
 import { exampleData } from './example.data';
+import { decodeCreate } from './decode-create';
 
 @Component({
   templateUrl: './analyze.component.html',
@@ -39,8 +41,8 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   protected data$ = new ReplaySubject<{
-    raw: object;
-    decoded: WebAuthnChallengeResponse;
+    raw: WebAuthnChallengeResponse;
+    decoded: DecodedWebAuthnChallengeResponse;
   }>(1);
   protected panelExpanded = true;
   protected displayMode: 'raw' | 'decoded' | 'pretty' = 'decoded';
@@ -79,8 +81,8 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   }
 
   getMetadata(
-    data: WebAuthnChallengeResponse
-  ): JsonMetadata<WebAuthnChallengeResponse> {
+    data: DecodedWebAuthnChallengeResponse
+  ): JsonMetadata<DecodedWebAuthnChallengeResponse> {
     if (data.method === 'navigator.credentials.create') {
       return WebAuthnCreateMetadata;
     }
@@ -111,13 +113,18 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
   }
 }
 
-function read(input: string): object {
+function read(input: string): WebAuthnChallengeResponse {
   const decoded = atob(input);
   const parsed = JSON.parse(decoded);
   return parsed;
 }
 
-function decode(input: object): WebAuthnChallengeResponse {
-  const decoded = input as WebAuthnChallengeResponse;
-  return decoded;
+function decode(
+  input: WebAuthnChallengeResponse
+): DecodedWebAuthnChallengeResponse {
+  if (input.method === 'navigator.credentials.create') {
+    return decodeCreate(input);
+  }
+
+  return input;
 }
