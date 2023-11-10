@@ -126,4 +126,28 @@ export interface DecodedWebAuthCreateResponse {
 
 export interface DecodedAttestationObject {}
 
-export interface DecodedAuthenticatorData {}
+export interface DecodedAuthenticatorData {
+  rpIdHash: string;
+  flags: DecodedAuthenticatorDataFlags;
+  counter: number;
+  attestedCredentialData: DecodedAttestedCredentialData;
+  unsupportedData?: string;
+}
+
+export interface DecodedAuthenticatorDataFlags {
+  userPresence: boolean;
+  reserved1: boolean;
+  userVerification: boolean;
+  backupEligibility: boolean;
+  backupState: boolean;
+  reserved2: boolean;
+  attestedData: boolean;
+  extensionData: boolean;
+}
+
+export interface DecodedAttestedCredentialData {
+  aaguid: string;
+  credentialIdLength: number;
+  credentialId: string;
+  credentialPublicKey: object;
+}
