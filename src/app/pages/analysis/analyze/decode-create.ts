@@ -1,8 +1,11 @@
 import {
+  DecodedAttestedCredentialData,
   DecodedAuthenticatorData,
   DecodedWebAuthnCreateChallengeResponse,
   WebAuthnCreateChallengeResponse,
 } from '../../../types/webauthn-challenge-response';
+
+import { CBOR } from './cbor';
 
 export function decodeCreate(
   input: WebAuthnCreateChallengeResponse
@@ -12,17 +15,24 @@ export function decodeCreate(
     response: {
       value: {
         authenticatorAttachment: input.response.value.authenticatorAttachment,
-        getClientExtensionResults: {},
+        getClientExtensionResults:
+          input.response.value.getClientExtensionResults,
         id: input.response.value.id,
         rawId: input.response.value.rawId,
         type: input.response.value.type,
         response: {
-          attestationObject: {},
+          attestationObject: tryDecode(() =>
+            toHexString(
+              decodeBase64Url(input.response.value.response.attestationObject)
+            )
+          ),
           clientDataJSON: tryDecode(() =>
             JSON.parse(atob(input.response.value.response.clientDataJSON))
           ),
-          getAuthenticatorData: decodeAuthenticatorData(
-            input.response.value.response.getAuthenticatorData
+          getAuthenticatorData: tryDecode(() =>
+            decodeAuthenticatorData(
+              input.response.value.response.getAuthenticatorData
+            )
           ),
           getPublicKey: {},
           getPublicKeyAlgorithm:
@@ -52,7 +62,7 @@ function decodeAuthenticatorData(data: string): DecodedAuthenticatorData {
     let backupEligibility = !!(flagsByte & 0b00001000);
     let backupState       = !!(flagsByte & 0b00010000);
     let reserved2         = !!(flagsByte & 0b00100000);
-    let attestedData      = !!(flagsByte & 0b01000000);
+    let attestationData      = !!(flagsByte & 0b01000000);
     let extensionData     = !!(flagsByte & 0b10000000);
     flags = {
       userPresence,
@@ -61,33 +71,67 @@ function decodeAuthenticatorData(data: string): DecodedAuthenticatorData {
       backupEligibility,
       backupState,
       reserved2,
-      attestedData,
+      attestationData,
       extensionData
     };
   }
 
   const counter = reader.readUInt32BE();
-  const aaguid = toUuidStandardFormat(reader.read(16));
-  const credentialIdLength = reader.readUInt16BE();
-  const credentialId = toHexString(reader.read(credentialIdLength));
-  const attestedCredentialData = {
-    aaguid,
-    credentialIdLength,
-    credentialId,
-  };
 
   const result = {
     rpIdHash,
     flags,
     counter,
-    attestedCredentialData,
+    attestedCredentialData: flags.attestationData
+      ? tryDecode(() => decodeAttestedCredentialData(reader))
+      : undefined,
   } as DecodedAuthenticatorData;
+
+  if (flags.extensionData) {
+    result.extensionData = tryDecode(() => {
+      const remainingData = reader.getCopyOfRemainingData();
+      // Ignore data for the moment
+      const [data, length] = CBOR.decode(remainingData.buffer, {
+        ignoreTrailingData: true,
+      });
+      reader.read(length);
+      return data;
+    });
+  }
 
   if (reader.remaining > 0) {
     result.unsupportedData = toHexString(reader.read(reader.remaining));
   }
 
   return result;
+}
+
+function decodeAttestedCredentialData(
+  reader: BufferReader
+): DecodedAttestedCredentialData {
+  const attestationMinLen = 16 + 2 + 16 + 42; // aaguid + credIdLen + credId + pk
+  if (reader.remaining < attestationMinLen)
+    throw new Error(
+      `The attestationData flag is set, but the remaining data is smaller than ${attestationMinLen} bytes. Did we encounter the attestationData flag for an assertion response?`
+    );
+  const aaguid = toUuidStandardFormat(reader.read(16));
+  const credentialIdLength = reader.readUInt16BE();
+  const credentialId = toHexString(reader.read(credentialIdLength));
+  const credentialPublicKey = tryDecode(() => {
+    const remainingData = reader.getCopyOfRemainingData();
+    // Ignore data for the moment
+    const [data, length] = CBOR.decode(remainingData.buffer, {
+      ignoreTrailingData: true,
+    });
+    const rawCredentialPublicKey = reader.read(length);
+    return toHexString(rawCredentialPublicKey);
+  });
+  return {
+    aaguid,
+    credentialIdLength,
+    credentialId,
+    credentialPublicKey,
+  };
 }
 
 /** Hacky method to return a an error message even if the data is not of the correct type */
@@ -118,6 +162,11 @@ class BufferReader {
   }
 
   read(bytes: number): Uint8Array {
+    if (bytes > this.remaining) {
+      throw new Error(
+        `Trying to read ${bytes} bytes, but only ${this.remaining} bytes are available`
+      );
+    }
     const value = this.buffer.slice(this.offset, this.offset + bytes);
     this.offset += bytes;
     return value;
@@ -129,14 +178,16 @@ class BufferReader {
 
   readUInt32BE(): number {
     const value = this.read(4);
-    this.offset += 4;
     return (value[0] << 24) | (value[1] << 16) | (value[2] << 8) | value[3];
   }
 
   readUInt16BE(): number {
     const value = this.read(2);
-    this.offset += 2;
     return (value[0] << 8) | value[1];
+  }
+
+  getCopyOfRemainingData(): Uint8Array {
+    return this.buffer.slice(this.offset);
   }
 }
 
