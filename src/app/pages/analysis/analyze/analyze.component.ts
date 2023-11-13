@@ -20,6 +20,7 @@ import { JsonMetadata } from '../../../pretty-json/json-metadata';
 import { WebAuthnCreateMetadata } from './metadata';
 import { exampleData } from './example.data';
 import { decodeCreate } from './decode-create';
+import { decodeGet } from './decode-get';
 
 @Component({
   templateUrl: './analyze.component.html',
@@ -101,7 +102,7 @@ export class AnalyzeComponent implements OnInit, OnDestroy {
             },
           },
         },
-      };
+      } as any; // not implemented yet
     } else {
       return {} as any;
     }
@@ -127,7 +128,7 @@ function decode(
       return decodeCreate(input);
     }
 
-    return input;
+    return decodeGet(input);
   } catch (error) {
     console.error(error);
     return undefined;

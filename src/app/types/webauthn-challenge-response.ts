@@ -3,7 +3,7 @@ export type WebAuthnChallengeResponse =
   | WebAuthnCreateChallengeResponse;
 
 export type DecodedWebAuthnChallengeResponse =
-  | WebAuthnGetChallengeResponse
+  | DecodedWebAuthnGetChallengeResponse
   | DecodedWebAuthnCreateChallengeResponse;
 
 export interface WebAuthnGetChallengeResponse {
@@ -11,6 +11,45 @@ export interface WebAuthnGetChallengeResponse {
   options: {
     publicKey: WebAuthnGetOptions;
   };
+  response: {
+    value: WebAuthnGetResponse;
+  };
+}
+
+export interface DecodedWebAuthnGetChallengeResponse {
+  method: 'navigator.credentials.get';
+  options: {
+    publicKey: DecodedWebAuthnGetOptions;
+  };
+  response: {
+    value: DecodedWebAuthnGetResponse;
+  };
+}
+
+export interface WebAuthnGetResponse {
+  rawId: string;
+  id: string;
+  type: string;
+  response: {
+    authenticatorData: string;
+    signature: string;
+    userHandle: string;
+    clientDataJSON: string;
+  };
+  getClientExtensionResults: {};
+}
+
+export interface DecodedWebAuthnGetResponse {
+  rawId: string;
+  id: string;
+  type: string;
+  response: {
+    authenticatorData: DecodedAuthenticatorData;
+    signature: string;
+    userHandle: string;
+    clientDataJSON: object;
+  };
+  getClientExtensionResults: {};
 }
 
 export interface WebAuthnCreateChallengeResponse {
@@ -40,6 +79,15 @@ export type WebAuthnMethod =
 export type WebAuthnOptions = WebAuthnGetOptions | WebAuthnCreateOptions;
 
 export interface WebAuthnGetOptions {
+  timeout: number;
+  challenge: string;
+  allowCredentials: WebAuthnOptionsPubKeyCredParam[];
+  userVerification: 'required' | 'preferred' | 'discouraged';
+  rpId: string;
+  extensions: WebAuthnGetOptionsExtensions;
+}
+
+export interface DecodedWebAuthnGetOptions {
   timeout: number;
   challenge: string;
   allowCredentials: WebAuthnOptionsPubKeyCredParam[];
