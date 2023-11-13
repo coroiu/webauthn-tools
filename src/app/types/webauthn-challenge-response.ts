@@ -65,7 +65,7 @@ export interface WebAuthnCreateChallengeResponse {
 export interface DecodedWebAuthnCreateChallengeResponse {
   method: 'navigator.credentials.create';
   options: {
-    publicKey: WebAuthnCreateOptions;
+    publicKey: DecodedWebAuthnCreateOptions;
   };
   response: {
     value: DecodedWebAuthCreateResponse;
@@ -90,7 +90,7 @@ export interface WebAuthnGetOptions {
 export interface DecodedWebAuthnGetOptions {
   timeout: number;
   challenge: string;
-  allowCredentials: WebAuthnOptionsPubKeyCredParam[];
+  allowCredentials: DecodedWebAuthnOptionsPubKeyCredParam[];
   userVerification: 'required' | 'preferred' | 'discouraged';
   rpId: string;
   extensions: WebAuthnGetOptionsExtensions;
@@ -106,6 +106,18 @@ export interface WebAuthnCreateOptions {
   attestation: 'none' | 'indirect' | 'direct';
   extensions: WebAuthnCreateOptionsExtensions;
   excludeCredentials: WebAuthnOptionsPubKeyCredParam[];
+}
+
+export interface DecodedWebAuthnCreateOptions {
+  rp: WebAuthnCreateOptionsRp;
+  user: WebAuthnCreateOptionsUser;
+  challenge: string;
+  pubKeyCredParams: DecodedWebAuthnOptionsPubKeyCredParam[];
+  authenticatorSelection: WebAuthnCreateOptionsAuthenticatorSelection;
+  timeout: number;
+  attestation: 'none' | 'indirect' | 'direct';
+  extensions: WebAuthnCreateOptionsExtensions;
+  excludeCredentials: DecodedWebAuthnOptionsPubKeyCredParam[];
 }
 
 export interface WebAuthnCreateOptionsRp {
@@ -129,6 +141,13 @@ export interface WebAuthnOptionsPubKeyCredParam {
   type: 'public-key';
   id: string;
   alg: number;
+  transports?: ('usb' | 'nfc' | 'ble' | 'internal' | 'hybrid')[];
+}
+
+export interface DecodedWebAuthnOptionsPubKeyCredParam {
+  type: 'public-key';
+  id: string;
+  alg: string;
   transports?: ('usb' | 'nfc' | 'ble' | 'internal' | 'hybrid')[];
 }
 

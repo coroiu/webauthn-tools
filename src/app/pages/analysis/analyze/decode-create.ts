@@ -12,6 +12,7 @@ import {
   decodeAuthenticatorData,
   decodeBase64Url,
   decodePublicKeyAlgorithm,
+  decodeWebAuthnOptionsPubKeyCredParam,
   recursiveConvertArrayBufferToHexString,
   toHexString,
   toUuidStandardFormat,
@@ -23,6 +24,18 @@ export function decodeCreate(
 ): DecodedWebAuthnCreateChallengeResponse {
   return {
     ...input,
+    options: {
+      ...input.options,
+      publicKey: {
+        ...input.options.publicKey,
+        pubKeyCredParams: input.options.publicKey.pubKeyCredParams.map(
+          decodeWebAuthnOptionsPubKeyCredParam
+        ),
+        excludeCredentials: input.options.publicKey.excludeCredentials.map(
+          decodeWebAuthnOptionsPubKeyCredParam
+        ),
+      },
+    },
     response: {
       value: {
         authenticatorAttachment: input.response.value.authenticatorAttachment,

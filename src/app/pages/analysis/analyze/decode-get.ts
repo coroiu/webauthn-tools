@@ -7,6 +7,7 @@ import {
   decodeAuthenticatorData,
   decodeBase64Url,
   decodePublicKeyAlgorithm,
+  decodeWebAuthnOptionsPubKeyCredParam,
   recursiveConvertArrayBufferToHexString,
   toHexString,
   toUuidStandardFormat,
@@ -18,6 +19,15 @@ export function decodeGet(
 ): DecodedWebAuthnGetChallengeResponse {
   return {
     ...input,
+    options: {
+      ...input.options,
+      publicKey: {
+        ...input.options.publicKey,
+        allowCredentials: input.options.publicKey.allowCredentials.map(
+          decodeWebAuthnOptionsPubKeyCredParam
+        ),
+      },
+    },
     response: {
       value: {
         id: input.response.value.id,

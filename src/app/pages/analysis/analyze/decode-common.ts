@@ -1,6 +1,8 @@
 import {
   DecodedAttestedCredentialData,
   DecodedAuthenticatorData,
+  DecodedWebAuthnOptionsPubKeyCredParam,
+  WebAuthnOptionsPubKeyCredParam,
 } from '../../../types/webauthn-challenge-response';
 import { CBOR } from './cbor';
 
@@ -96,7 +98,15 @@ export function recursiveConvertArrayBufferToHexString(data: object): any {
   return data;
 }
 
-export function decodePublicKeyAlgorithm(data: number): string {
+export function decodePublicKeyAlgorithm(data: number): string;
+export function decodePublicKeyAlgorithm(data: undefined): undefined;
+export function decodePublicKeyAlgorithm(
+  data: number | undefined
+): string | undefined {
+  if (data === undefined) {
+    return undefined;
+  }
+
   const map: Record<string, string | undefined> = {
     '-65535': 'RS1',
     '-65534': 'A128CTR',
@@ -271,5 +281,14 @@ function decodeAttestedCredentialData(
     credentialIdLength,
     credentialId,
     credentialPublicKey,
+  };
+}
+
+export function decodeWebAuthnOptionsPubKeyCredParam(
+  data: WebAuthnOptionsPubKeyCredParam
+): DecodedWebAuthnOptionsPubKeyCredParam {
+  return {
+    ...data,
+    alg: decodePublicKeyAlgorithm(data.alg),
   };
 }
