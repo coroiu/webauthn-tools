@@ -1,4 +1,5 @@
 import {
+  DecodedAttestationObject,
   DecodedAttestedCredentialData,
   DecodedAuthenticatorData,
   DecodedWebAuthnCreateChallengeResponse,
@@ -22,8 +23,8 @@ export function decodeCreate(
         type: input.response.value.type,
         response: {
           attestationObject: tryDecode(() =>
-            toHexString(
-              decodeBase64Url(input.response.value.response.attestationObject)
+            decodeAttestationObject(
+              input.response.value.response.attestationObject
             )
           ),
           clientDataJSON: tryDecode(() =>
@@ -34,9 +35,14 @@ export function decodeCreate(
               input.response.value.response.getAuthenticatorData
             )
           ),
-          getPublicKey: {},
-          getPublicKeyAlgorithm:
-            input.response.value.response.getPublicKeyAlgorithm,
+          getPublicKey: tryDecode(() =>
+            toHexString(
+              decodeBase64Url(input.response.value.response.getPublicKey)
+            )
+          ),
+          getPublicKeyAlgorithm: decodePublicKeyAlgorithm(
+            input.response.value.response.getPublicKeyAlgorithm
+          ),
           getTransports: input.response.value.response.getTransports,
         },
       },
@@ -44,8 +50,21 @@ export function decodeCreate(
   };
 }
 
-function decodeAuthenticatorData(data: string): DecodedAuthenticatorData {
+function decodeAttestationObject(data: string): DecodedAttestationObject {
   const buffer = decodeBase64Url(data);
+  const cborMap = CBOR.decode(buffer.buffer)[0];
+  console.log({ cborMap, recursiveConvertArrayBufferToHexString });
+  return {
+    ...cborMap,
+    attStmt: recursiveConvertArrayBufferToHexString(cborMap.attStmt),
+    authData: decodeAuthenticatorData(cborMap.authData),
+  };
+}
+
+function decodeAuthenticatorData(
+  data: string | Uint8Array
+): DecodedAuthenticatorData {
+  const buffer = data instanceof Uint8Array ? data : decodeBase64Url(data);
   if (buffer.length < 37) {
     throw new Error('Authenticator data is too short');
   }
@@ -123,8 +142,10 @@ function decodeAttestedCredentialData(
     const [data, length] = CBOR.decode(remainingData.buffer, {
       ignoreTrailingData: true,
     });
-    const rawCredentialPublicKey = reader.read(length);
-    return toHexString(rawCredentialPublicKey);
+    reader.read(length);
+    return recursiveConvertArrayBufferToHexString(data);
+    // const rawCredentialPublicKey = reader.read(length);
+    // return toHexString(rawCredentialPublicKey);
   });
   return {
     aaguid,
@@ -203,4 +224,109 @@ function toUuidStandardFormat(buffer: Uint8Array) {
     12,
     16
   )}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+function recursiveConvertArrayBufferToHexString(data: object): any {
+  if (data instanceof ArrayBuffer) {
+    return toHexString(new Uint8Array(data));
+  }
+  if (data instanceof Uint8Array) {
+    return toHexString(data);
+  }
+  if (Array.isArray(data)) {
+    return data.map(recursiveConvertArrayBufferToHexString);
+  }
+  if (typeof data === 'object') {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        recursiveConvertArrayBufferToHexString(value),
+      ])
+    );
+  }
+  return data;
+}
+
+function decodePublicKeyAlgorithm(data: number): string {
+  const map: Record<string, string | undefined> = {
+    '-65535': 'RS1',
+    '-65534': 'A128CTR',
+    '-65533': 'A192CTR',
+    '-65532': 'A256CTR',
+    '-65531': 'A128CBC',
+    '-65530': 'A192CBC',
+    '-65529': 'A256CBC',
+    '-260': 'WalnutDSA',
+    '-259': 'RS512',
+    '-258': 'RS384',
+    '-257': 'RS256',
+    '-47': 'ES256K',
+    '-46': 'HSS-LMS',
+    '-45': 'SHAKE256',
+    '-44': 'SHA-512',
+    '-43': 'SHA-384',
+    '-42': 'RSAES-OAEP w/ SHA-512',
+    '-41': 'RSAES-OAEP w/ SHA-256',
+    '-40': 'RSAES-OAEP w/ RFC 8017 default parameters',
+    '-39': 'PS512',
+    '-38': 'PS384',
+    '-37': 'PS256',
+    '-36': 'ES512',
+    '-35': 'ES384',
+    '-34': 'ECDH-SS + A256KW',
+    '-33': 'ECDH-SS + A192KW',
+    '-32': 'ECDH-SS + A128KW',
+    '-31': 'ECDH-ES + A256KW',
+    '-30': 'ECDH-ES + A192KW',
+    '-29': 'ECDH-ES + A128KW',
+    '-28': 'ECDH-SS + HKDF-512',
+    '-27': 'ECDH-SS + HKDF-256',
+    '-26': 'ECDH-ES + HKDF-512',
+    '-25': 'ECDH-ES + HKDF-256',
+    '-18': 'SHAKE128',
+    '-17': 'SHA-512/256',
+    '-16': 'SHA-256',
+    '-15': 'SHA-256/64',
+    '-14': 'SHA-1',
+    '-13': 'direct+HKDF-AES-256',
+    '-12': 'direct+HKDF-AES-128',
+    '-11': 'direct+HKDF-SHA-512',
+    '-10': 'direct+HKDF-SHA-256',
+    '-8': 'EdDSA',
+    '-7': 'ES256',
+    '-6': 'direct',
+    '-5': 'A256KW',
+    '-4': 'A192KW',
+    '-3': 'A128KW',
+    '1': 'A128GCM',
+    '2': 'A192GCM',
+    '3': 'A256GCM',
+    '4': 'HMAC 256/64',
+    '5': 'HMAC 256/256',
+    '6': 'HMAC 384/384',
+    '7': 'HMAC 512/512',
+    '10': 'AES-CCM-16-64-128',
+    '11': 'AES-CCM-16-64-256',
+    '12': 'AES-CCM-64-64-128',
+    '13': 'AES-CCM-64-64-256',
+    '14': 'AES-MAC 128/64',
+    '15': 'AES-MAC 256/64',
+    '24': 'ChaCha20/Poly1305',
+    '25': 'AES-MAC 128/128',
+    '26': 'AES-MAC 256/128',
+    '30': 'AES-CCM-16-128-128',
+    '31': 'AES-CCM-16-128-256',
+    '32': 'AES-CCM-64-128-128',
+    '33': 'AES-CCM-64-128-256',
+    '34': 'IV-GENERATION',
+  };
+
+  const key = String(data);
+  const value = map[key];
+
+  if (value == undefined) {
+    return `[Unknown algorithm: ${key}]`;
+  }
+
+  return value;
 }

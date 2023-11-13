@@ -113,8 +113,8 @@ export interface DecodedWebAuthCreateResponse {
   response: {
     attestationObject: DecodedAttestationObject;
     getAuthenticatorData: DecodedAuthenticatorData;
-    getPublicKey: object;
-    getPublicKeyAlgorithm: number;
+    getPublicKey: string;
+    getPublicKeyAlgorithm: string;
     getTransports: string[];
     clientDataJSON: object;
   };
@@ -124,7 +124,11 @@ export interface DecodedWebAuthCreateResponse {
   getClientExtensionResults: object;
 }
 
-export interface DecodedAttestationObject {}
+export interface DecodedAttestationObject {
+  fmt: string;
+  attStmt: object;
+  authData: DecodedAuthenticatorData;
+}
 
 export interface DecodedAuthenticatorData {
   rpIdHash: string;
@@ -150,6 +154,6 @@ export interface DecodedAttestedCredentialData {
   aaguid: string;
   credentialIdLength: number;
   credentialId: string;
-  credentialPublicKey?: string;
-  // credentialPublicKey: object; // cannot properly decode COSE yet
+  // credentialPublicKey?: string;
+  credentialPublicKey: object;
 }
