@@ -46,14 +46,27 @@
           </ul>
         </li>
 
-        <li class="nav-item">
+        <li class="nav-item dropdown">
           <a
-            class="nav-link"
-            routerLinkActive="active"
-            ariaCurrentWhenActive="page"
-            routerLink="/prf-demo"
-            >PRF Demo</a
+            class="nav-link dropdown-toggle"
+            href="#"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
           >
+            Demo
+          </a>
+          <ul class="dropdown-menu">
+            <li class="nav-item">
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                routerLink="/prf-demo"
+                >PRF Demo</a
+              >
+            </li>
+          </ul>
         </li>
 
         <li class="nav-item dropdown">
