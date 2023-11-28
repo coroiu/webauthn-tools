@@ -1,1 +1,43 @@
-Has passkey provider? {{ passkeyProviderDetected }}
+<div class="page-container container-md">
+  <h1>Credential existence checker</h1>
+  <p class="lead">Passive and active techniques to scrape information</p>
+  Uses methods available to the page script to check if the user has a passkey
+  provider installed, and if that provider has a passkey for this site.
+
+  <div class="row">
+    <div class="col-md">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Passkey provider</mat-card-title>
+          <mat-card-subtitle
+            >Does your browser have a passkey provider
+            installed?</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <div
+            *ngIf="passkeyProviderDetected"
+            class="detection-result text-success"
+          >
+            Yes
+          </div>
+          <div
+            *ngIf="!passkeyProviderDetected"
+            class="detection-result text-danger"
+          >
+            No
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div class="col-md">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Passkey provider existence</mat-card-title>
+          <mat-card-subtitle>Start</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content> </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>
