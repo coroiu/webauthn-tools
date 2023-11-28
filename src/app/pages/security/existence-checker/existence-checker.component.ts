@@ -21,6 +21,10 @@ export class ExistenceCheckerComponent implements OnInit {
   }
 
   protected async checkCredentials(): Promise<void> {
+    if (!this.passkeyProviderDetected) {
+      return;
+    }
+
     let nativeCalled = false;
 
     (getCoroiu().webauthn.interceptors.get as any) = async (
@@ -48,10 +52,12 @@ export class ExistenceCheckerComponent implements OnInit {
     } catch {}
 
     setTimeout(() => {
-      this.credentialDetected = !nativeCalled;
-      abortController.abort();
-
-      (getCoroiu().webauthn.interceptors.get as any) = undefined;
+      try {
+        this.credentialDetected = !nativeCalled;
+        abortController.abort();
+      } finally {
+        (getCoroiu().webauthn.interceptors.get as any) = undefined;
+      }
     }, 500);
   }
 
@@ -82,6 +88,9 @@ export class ExistenceCheckerComponent implements OnInit {
   }
 
   private checkPasskeyProvider(): boolean {
-    return window.navigator.credentials.get !== getCoroiu().webauthn.native.get;
+    return (
+      window.navigator.credentials.get !== getCoroiu().webauthn.native.get &&
+      window.navigator.credentials.get !== getCoroiu().webauthn.injectors.get
+    );
   }
 }

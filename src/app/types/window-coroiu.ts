@@ -10,6 +10,10 @@ export interface WindowCoroiu {
       get?: Window['navigator']['credentials']['get'];
       create?: Window['navigator']['credentials']['get'];
     };
+    injectors: {
+      get?: Window['navigator']['credentials']['get'];
+      create?: Window['navigator']['credentials']['get'];
+    };
     native: {
       readonly get: Window['navigator']['credentials']['get'];
       readonly create: Window['navigator']['credentials']['get'];

@@ -41,7 +41,7 @@
         </mat-card-header>
         <mat-card-actions>
           <button mat-raised-button (click)="createCredential()">
-            Create credentials
+            Create credential
           </button>
         </mat-card-actions>
       </mat-card>
@@ -71,12 +71,11 @@
             No
           </div>
 
-          <div
-            *ngIf="passkeyProviderDetected && credentialDetected"
-            class="detection-result text-success"
-          >
-            Possibly
-          </div>
+          <ng-container *ngIf="passkeyProviderDetected && credentialDetected">
+            <div class="detection-result text-success">Possibly</div>
+            Either your passkey provider contains a credential or your vault was
+            locked.
+          </ng-container>
         </mat-card-content>
         <mat-card-actions>
           <button
