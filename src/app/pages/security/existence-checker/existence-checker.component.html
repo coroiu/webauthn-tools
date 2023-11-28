@@ -4,7 +4,7 @@
   Uses methods available to the page script to check if the user has a passkey
   provider installed, and if that provider has a passkey for this site.
 
-  <div class="row">
+  <div class="row align-items-stretch">
     <div class="col-md">
       <mat-card>
         <mat-card-header>
@@ -30,13 +30,63 @@
         </mat-card-content>
       </mat-card>
     </div>
+
     <div class="col-md">
       <mat-card>
         <mat-card-header>
-          <mat-card-title>Passkey provider existence</mat-card-title>
-          <mat-card-subtitle>Start</mat-card-subtitle>
+          <mat-card-title>Create credential</mat-card-title>
+          <mat-card-subtitle
+            >Use this to create credentials for testing</mat-card-subtitle
+          >
         </mat-card-header>
-        <mat-card-content> </mat-card-content>
+        <mat-card-actions>
+          <button mat-raised-button (click)="createCredential()">
+            Create credentials
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+
+    <div class="col-md">
+      <mat-card>
+        <mat-card-header>
+          <mat-card-title>Existence</mat-card-title>
+          <mat-card-subtitle
+            >Does your passkey provider contain any
+            credentials?</mat-card-subtitle
+          >
+        </mat-card-header>
+        <mat-card-content>
+          <div
+            *ngIf="!passkeyProviderDetected"
+            class="detection-result text-danger"
+          >
+            Unknown
+          </div>
+
+          <div
+            *ngIf="passkeyProviderDetected && !credentialDetected"
+            class="detection-result text-danger"
+          >
+            No
+          </div>
+
+          <div
+            *ngIf="passkeyProviderDetected && credentialDetected"
+            class="detection-result text-success"
+          >
+            Possibly
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <button
+            mat-raised-button
+            [disabled]="!passkeyProviderDetected"
+            (click)="checkCredentials()"
+          >
+            Re-check credentials
+          </button>
+        </mat-card-actions>
       </mat-card>
     </div>
   </div>
