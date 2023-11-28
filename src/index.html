@@ -5,11 +5,46 @@
     <title>Webauthn tools</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script type="text/javascript">
-      window.coroiu = {};
-    </script>
     <!-- Manual script tag to load injection as quick as possible -->
-    <script src="/assets/browser-modifications/webauthn-injection.js"></script>
+    <script type="text/javascript">
+      // WebAuthn Injection
+      window.coroiu = {
+        webauthn: {
+          native: {
+            get: window.navigator.credentials.get,
+            create: window.navigator.credentials.create,
+            credentialsContainer: window.navigator.credentials,
+          },
+          interceptors: {},
+          injectors: {
+            get: (options, abortController) => {
+              const interceptor = window.coroiu.webauthn.interceptors.get;
+              if (interceptor) {
+                return interceptor(options, abortController);
+              } else {
+                return window.coroiu.webauthn.native.get.bind(
+                  window.coroiu.webauthn.native.credentialsContainer
+                )(options, abortController);
+              }
+            },
+            create: (options, abortController) => {
+              const interceptor = window.coroiu.webauthn.interceptors.create;
+              if (interceptor) {
+                return interceptor(options, abortController);
+              } else {
+                return window.coroiu.webauthn.native.create.bind(
+                  window.coroiu.webauthn.native.credentialsContainer
+                )(options, abortController);
+              }
+            },
+          },
+        },
+      };
+
+      window.navigator.credentials.get = window.coroiu.webauthn.injectors.get;
+      window.navigator.credentials.create =
+        window.coroiu.webauthn.injectors.create;
+    </script>
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap"
