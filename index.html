@@ -8,33 +8,35 @@
     <!-- Manual script tag to load injection as quick as possible -->
     <script type="text/javascript">
       // WebAuthn Injection
-      window.coroiu.webauthn = {
-        native: {
-          get: window.navigator.credentials.get,
-          create: window.navigator.credentials.create,
-          credentialsContainer: window.navigator.credentials,
-        },
-        interceptors: {},
-        injectors: {
-          get: (options, abortController) => {
-            const interceptor = window.coroiu.webauthn.interceptors.get;
-            if (interceptor) {
-              return interceptor(options, abortController);
-            } else {
-              return window.coroiu.webauthn.native.get.bind(
-                window.coroiu.webauthn.native.credentialsContainer
-              )(options, abortController);
-            }
+      window.coroiu = {
+        webauthn: {
+          native: {
+            get: window.navigator.credentials.get,
+            create: window.navigator.credentials.create,
+            credentialsContainer: window.navigator.credentials,
           },
-          create: (options, abortController) => {
-            const interceptor = window.coroiu.webauthn.interceptors.create;
-            if (interceptor) {
-              return interceptor(options, abortController);
-            } else {
-              return window.coroiu.webauthn.native.create.bind(
-                window.coroiu.webauthn.native.credentialsContainer
-              )(options, abortController);
-            }
+          interceptors: {},
+          injectors: {
+            get: (options, abortController) => {
+              const interceptor = window.coroiu.webauthn.interceptors.get;
+              if (interceptor) {
+                return interceptor(options, abortController);
+              } else {
+                return window.coroiu.webauthn.native.get.bind(
+                  window.coroiu.webauthn.native.credentialsContainer
+                )(options, abortController);
+              }
+            },
+            create: (options, abortController) => {
+              const interceptor = window.coroiu.webauthn.interceptors.create;
+              if (interceptor) {
+                return interceptor(options, abortController);
+              } else {
+                return window.coroiu.webauthn.native.create.bind(
+                  window.coroiu.webauthn.native.credentialsContainer
+                )(options, abortController);
+              }
+            },
           },
         },
       };
