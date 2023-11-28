@@ -24,6 +24,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'security/existence-checker',
+    loadComponent: () =>
+      import(
+        './pages/security/existence-checker/existence-checker.component'
+      ).then((m) => m.ExistenceCheckerComponent),
+  },
+  {
     path: 'analyze',
     redirectTo: '/analyze/data-collection',
     pathMatch: 'full',
