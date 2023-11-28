@@ -11,8 +11,8 @@
       window.coroiu = {
         webauthn: {
           native: {
-            get: window.navigator.credentials.get,
-            create: window.navigator.credentials.create,
+            get: Object.getPrototypeOf(window.navigator.credentials).get,
+            create: Object.getPrototypeOf(window.navigator.credentials).create,
             credentialsContainer: window.navigator.credentials,
           },
           interceptors: {},
