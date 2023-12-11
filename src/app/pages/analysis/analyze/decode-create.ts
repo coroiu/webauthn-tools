@@ -28,11 +28,15 @@ export function decodeCreate(
       ...input.options,
       publicKey: {
         ...input.options.publicKey,
-        pubKeyCredParams: input.options.publicKey.pubKeyCredParams.map(
-          decodeWebAuthnOptionsPubKeyCredParam
+        pubKeyCredParams: tryDecode(() =>
+          input.options.publicKey.pubKeyCredParams?.map(
+            decodeWebAuthnOptionsPubKeyCredParam
+          )
         ),
-        excludeCredentials: input.options.publicKey.excludeCredentials.map(
-          decodeWebAuthnOptionsPubKeyCredParam
+        excludeCredentials: tryDecode(() =>
+          input.options.publicKey.excludeCredentials?.map(
+            decodeWebAuthnOptionsPubKeyCredParam
+          )
         ),
       },
     },

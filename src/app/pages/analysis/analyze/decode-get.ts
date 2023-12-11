@@ -23,8 +23,10 @@ export function decodeGet(
       ...input.options,
       publicKey: {
         ...input.options.publicKey,
-        allowCredentials: input.options.publicKey.allowCredentials.map(
-          decodeWebAuthnOptionsPubKeyCredParam
+        allowCredentials: tryDecode(() =>
+          input.options.publicKey.allowCredentials?.map(
+            decodeWebAuthnOptionsPubKeyCredParam
+          )
         ),
       },
     },
