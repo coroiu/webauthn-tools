@@ -243,7 +243,7 @@ export function decodeAuthenticatorData(
         ignoreTrailingData: true,
       });
       reader.read(length);
-      return data;
+      return recursiveConvertArrayBufferToHexString(data);
     });
   }
 
