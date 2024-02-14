@@ -37,6 +37,7 @@ export function decodeGet(
         type: input.response.value.type,
         getClientExtensionResults:
           input.response.value.getClientExtensionResults,
+        authenticatorAttachment: input.response.value.authenticatorAttachment,
         response: {
           authenticatorData: tryDecode(() =>
             decodeAuthenticatorData(

@@ -36,6 +36,7 @@ export interface WebAuthnGetResponse {
     userHandle: string;
     clientDataJSON: string;
   };
+  authenticatorAttachment: string;
   getClientExtensionResults: {};
 }
 
@@ -49,6 +50,7 @@ export interface DecodedWebAuthnGetResponse {
     userHandle: string;
     clientDataJSON: object;
   };
+  authenticatorAttachment: string;
   getClientExtensionResults: {};
 }
 
