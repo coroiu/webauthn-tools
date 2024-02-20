@@ -238,7 +238,6 @@ export function decodeAuthenticatorData(
   if (flags.extensionData) {
     result.extensionData = tryDecode(() => {
       const remainingData = reader.getCopyOfRemainingData();
-      // Ignore data for the moment
       const [data, length] = CBOR.decode(remainingData.buffer, {
         ignoreTrailingData: true,
       });
