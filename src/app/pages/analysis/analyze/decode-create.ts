@@ -46,7 +46,7 @@ export function decodeCreate(
         getClientExtensionResults:
           input.response.value.getClientExtensionResults,
         id: input.response.value.id,
-        rawId: input.response.value.rawId,
+        rawId: toHexString(decodeBase64Url(input.response.value.rawId)),
         type: input.response.value.type,
         response: {
           attestationObject: tryDecode(() =>

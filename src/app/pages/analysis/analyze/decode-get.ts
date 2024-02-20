@@ -33,7 +33,7 @@ export function decodeGet(
     response: {
       value: {
         id: input.response.value.id,
-        rawId: input.response.value.rawId,
+        rawId: toHexString(decodeBase64Url(input.response.value.rawId)),
         type: input.response.value.type,
         getClientExtensionResults:
           input.response.value.getClientExtensionResults,
