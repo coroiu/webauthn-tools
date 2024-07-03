@@ -1,0 +1,58 @@
+<div class="page-container container-md">
+  <h1>Manual analysis</h1>
+  <p class="lead">
+    This page can be used to manually decode parts of a WebAuthn response. This
+    is useful for when the response has been collected through some other means
+    than the data-collection tool available on this site.
+  </p>
+
+  <mat-card>
+    <mat-card-header>
+      <h3>Attestation Object</h3>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Data input</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <p>Paste data here to begin analysis</p>
+        <mat-form-field>
+          <textarea matInput (input)="readData($event)"></textarea>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <ng-container *ngIf="data$ | async as data">
+        <pre *ngIf="data.decoded"><code>{{ data.decoded | json }}</code></pre>
+        <ng-container *ngIf="data.decoded == undefined">
+          Unable to decode input
+        </ng-container>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <h3>Authenticator Data</h3>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Data input</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <p>Paste data here to begin analysis</p>
+        <mat-form-field>
+          <textarea matInput (input)="readData($event)"></textarea>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <ng-container *ngIf="data$ | async as data">
+        <pre *ngIf="data.decoded"><code>{{ data.decoded | json }}</code></pre>
+        <ng-container *ngIf="data.decoded == undefined">
+          Unable to decode input
+        </ng-container>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+</div>

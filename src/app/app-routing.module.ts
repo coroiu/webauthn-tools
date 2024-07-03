@@ -3,6 +3,13 @@ import { RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
+    path: 'analyze/manual-analysis',
+    loadComponent: () =>
+      import('./pages/analysis/manual-analysis/manual-analysis.component').then(
+        (m) => m.ManualAnalysisComponent
+      ),
+  },
+  {
     path: 'analyze/analysis',
     loadComponent: () =>
       import('./pages/analysis/analyze/analyze.component').then(
