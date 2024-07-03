@@ -8,12 +8,23 @@ import { MatCardModule } from '@angular/material/card';
 
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
+  DecodedAttestationObject,
+  DecodedAuthenticatorData,
   DecodedWebAuthnChallengeResponse,
   WebAuthnChallengeResponse,
 } from '../../../types/webauthn-challenge-response';
 import { OptionsComponent } from '../../../options/options.component';
 import { PrettyJsonComponent } from '../../../pretty-json/pretty-json.component';
 import { JsonMetadata } from '../../../pretty-json/json-metadata';
+import {
+  attestationObjectExample,
+  authenticatorDataExample,
+} from './example.data';
+import { decodeAttestationObject } from '../analyze/decode-create';
+import {
+  decodeAuthenticatorData,
+  decodeBase64Url,
+} from '../analyze/decode-common';
 
 @Component({
   templateUrl: './manual-analysis.component.html',
@@ -33,42 +44,57 @@ export class ManualAnalysisComponent implements OnInit, OnDestroy {
   private activatedRoute = inject(ActivatedRoute);
   private onDestroy$ = new Subject<void>();
 
-  protected data$ = new ReplaySubject<{
-    raw: WebAuthnChallengeResponse;
-    decoded: DecodedWebAuthnChallengeResponse | undefined;
+  protected attestationObjectData$ = new ReplaySubject<{
+    raw: string;
+    decoded: DecodedAttestationObject | undefined;
+  }>(1);
+
+  protected authenticatorData$ = new ReplaySubject<{
+    raw: string;
+    decoded: DecodedAuthenticatorData | undefined;
   }>(1);
 
   ngOnInit(): void {
-    this.data$.pipe(takeUntil(this.onDestroy$)).subscribe(() => {
-      // this.panelExpanded = false;
-    });
+    // this.attestationObjectData$
+    //   .pipe(takeUntil(this.onDestroy$))
+    //   .subscribe(() => {
+    //     // this.panelExpanded = false;
+    //   });
 
     this.activatedRoute.queryParams
       .pipe(takeUntil(this.onDestroy$))
       .subscribe((params) => {
-        // if ('example' in params) {
-        //   const raw = read(exampleData);
-        //   const decoded = decode(raw);
-        //   this.data$.next({ raw, decoded });
-        //   this.displayMode = 'pretty';
-        // }
+        if ('example' in params) {
+          {
+            // Attestation object
+            const raw = read(attestationObjectExample);
+            const decoded = decodeAttestationObjectData(raw);
+            this.attestationObjectData$.next({ raw, decoded });
+          }
+
+          {
+            // Authenticator data
+            const raw = read(authenticatorDataExample);
+            const decoded = decodeAuthenticatorDataData(raw);
+            this.authenticatorData$.next({ raw, decoded });
+          }
+        }
       });
   }
 
   readData(data: Event) {
-    if (
-      !data.target ||
-      !('value' in data.target) ||
-      typeof data.target.value !== 'string'
-    ) {
-      return;
-    }
-
-    try {
-      const raw = read(data.target.value.replaceAll(' ', ''));
-      const decoded = decode(raw);
-      this.data$.next({ raw, decoded });
-    } catch {}
+    // if (
+    //   !data.target ||
+    //   !('value' in data.target) ||
+    //   typeof data.target.value !== 'string'
+    // ) {
+    //   return;
+    // }
+    // try {
+    //   const raw = read(data.target.value.replaceAll(' ', ''));
+    //   const decoded = decode(raw);
+    //   this.attestationObjectData$.next({ raw, decoded });
+    // } catch {}
   }
 
   getMetadata(
@@ -104,23 +130,29 @@ export class ManualAnalysisComponent implements OnInit, OnDestroy {
   }
 }
 
-function read(input: string): WebAuthnChallengeResponse {
-  const decoded = atob(input);
-  const parsed = JSON.parse(decoded);
-  return parsed;
+function read(input: string): any {
+  console.log('reading', input);
+  return decodeBase64Url(input);
 }
 
-function decode(
-  input: WebAuthnChallengeResponse
-): DecodedWebAuthnChallengeResponse | undefined {
-  throw new Error('Method not implemented.');
-  // try {
-  //   if (input.method === 'navigator.credentials.create') {
-  //     return decodeCreate(input);
-  //   }
-  //   return decodeGet(input);
-  // } catch (error) {
-  //   console.error(error);
-  //   return undefined;
-  // }
+function decodeAttestationObjectData(
+  input: string
+): DecodedAttestationObject | undefined {
+  try {
+    return decodeAttestationObject(input);
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+function decodeAuthenticatorDataData(
+  input: string
+): DecodedAuthenticatorData | undefined {
+  try {
+    return decodeAuthenticatorData(input);
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
 }

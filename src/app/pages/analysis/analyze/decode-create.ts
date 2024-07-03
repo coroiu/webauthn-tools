@@ -77,8 +77,10 @@ export function decodeCreate(
   };
 }
 
-function decodeAttestationObject(data: string): DecodedAttestationObject {
-  const buffer = decodeBase64Url(data);
+export function decodeAttestationObject(
+  data: string | Uint8Array
+): DecodedAttestationObject {
+  const buffer = data instanceof Uint8Array ? data : decodeBase64Url(data);
   const cborMap = CBOR.decode(buffer.buffer)[0];
   console.log({ cborMap, recursiveConvertArrayBufferToHexString });
   return {

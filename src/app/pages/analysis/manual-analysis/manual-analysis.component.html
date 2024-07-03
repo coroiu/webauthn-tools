@@ -22,7 +22,7 @@
         </mat-form-field>
       </mat-expansion-panel>
 
-      <ng-container *ngIf="data$ | async as data">
+      <ng-container *ngIf="attestationObjectData$ | async as data">
         <pre *ngIf="data.decoded"><code>{{ data.decoded | json }}</code></pre>
         <ng-container *ngIf="data.decoded == undefined">
           Unable to decode input
@@ -47,7 +47,7 @@
         </mat-form-field>
       </mat-expansion-panel>
 
-      <ng-container *ngIf="data$ | async as data">
+      <ng-container *ngIf="authenticatorData$ | async as data">
         <pre *ngIf="data.decoded"><code>{{ data.decoded | json }}</code></pre>
         <ng-container *ngIf="data.decoded == undefined">
           Unable to decode input
