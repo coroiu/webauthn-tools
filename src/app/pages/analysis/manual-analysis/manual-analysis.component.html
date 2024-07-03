@@ -16,9 +16,9 @@
           <mat-panel-title>Data input</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <p>Paste data here to begin analysis</p>
+        <p>Paste data here to begin analysis (Base64Url and Hex supported)</p>
         <mat-form-field>
-          <textarea matInput (input)="readData($event)"></textarea>
+          <textarea matInput (input)="readAttestationObject($event)"></textarea>
         </mat-form-field>
       </mat-expansion-panel>
 
@@ -41,13 +41,41 @@
           <mat-panel-title>Data input</mat-panel-title>
         </mat-expansion-panel-header>
 
-        <p>Paste data here to begin analysis</p>
+        <p>Paste data here to begin analysis (Base64Url and Hex supported)</p>
         <mat-form-field>
-          <textarea matInput (input)="readData($event)"></textarea>
+          <textarea matInput (input)="readAuthenticatorData($event)"></textarea>
         </mat-form-field>
       </mat-expansion-panel>
 
       <ng-container *ngIf="authenticatorData$ | async as data">
+        <pre *ngIf="data.decoded"><code>{{ data.decoded | json }}</code></pre>
+        <ng-container *ngIf="data.decoded == undefined">
+          Unable to decode input
+        </ng-container>
+      </ng-container>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card>
+    <mat-card-header>
+      <h3>Attested Credential Data</h3>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>Data input</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <p>Paste data here to begin analysis (Base64Url and Hex supported)</p>
+        <mat-form-field>
+          <textarea
+            matInput
+            (input)="readAttestedCredentialData($event)"
+          ></textarea>
+        </mat-form-field>
+      </mat-expansion-panel>
+
+      <ng-container *ngIf="attestedCredentialData$ | async as data">
         <pre *ngIf="data.decoded"><code>{{ data.decoded | json }}</code></pre>
         <ng-container *ngIf="data.decoded == undefined">
           Unable to decode input

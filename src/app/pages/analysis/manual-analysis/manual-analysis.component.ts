@@ -9,6 +9,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ReplaySubject, Subject, takeUntil } from 'rxjs';
 import {
   DecodedAttestationObject,
+  DecodedAttestedCredentialData,
   DecodedAuthenticatorData,
   DecodedWebAuthnChallengeResponse,
   WebAuthnChallengeResponse,
@@ -18,10 +19,13 @@ import { PrettyJsonComponent } from '../../../pretty-json/pretty-json.component'
 import { JsonMetadata } from '../../../pretty-json/json-metadata';
 import {
   attestationObjectExample,
+  attestedCredentialDataExample,
   authenticatorDataExample,
 } from './example.data';
 import { decodeAttestationObject } from '../analyze/decode-create';
 import {
+  BufferReader,
+  decodeAttestedCredentialData,
   decodeAuthenticatorData,
   decodeBase64Url,
 } from '../analyze/decode-common';
@@ -45,13 +49,18 @@ export class ManualAnalysisComponent implements OnInit, OnDestroy {
   private onDestroy$ = new Subject<void>();
 
   protected attestationObjectData$ = new ReplaySubject<{
-    raw: string;
+    raw: Uint8Array;
     decoded: DecodedAttestationObject | undefined;
   }>(1);
 
   protected authenticatorData$ = new ReplaySubject<{
-    raw: string;
+    raw: Uint8Array;
     decoded: DecodedAuthenticatorData | undefined;
+  }>(1);
+
+  protected attestedCredentialData$ = new ReplaySubject<{
+    raw: Uint8Array;
+    decoded: DecodedAttestedCredentialData | undefined;
   }>(1);
 
   ngOnInit(): void {
@@ -78,23 +87,60 @@ export class ManualAnalysisComponent implements OnInit, OnDestroy {
             const decoded = decodeAuthenticatorDataData(raw);
             this.authenticatorData$.next({ raw, decoded });
           }
+
+          {
+            // Attested credential data
+            const raw = read(attestedCredentialDataExample);
+            const decoded = decodeAttestedCredentialDataData(raw);
+            this.attestedCredentialData$.next({ raw, decoded });
+          }
         }
       });
   }
 
-  readData(data: Event) {
-    // if (
-    //   !data.target ||
-    //   !('value' in data.target) ||
-    //   typeof data.target.value !== 'string'
-    // ) {
-    //   return;
-    // }
-    // try {
-    //   const raw = read(data.target.value.replaceAll(' ', ''));
-    //   const decoded = decode(raw);
-    //   this.attestationObjectData$.next({ raw, decoded });
-    // } catch {}
+  readAttestationObject(data: Event) {
+    if (
+      !data.target ||
+      !('value' in data.target) ||
+      typeof data.target.value !== 'string'
+    ) {
+      return;
+    }
+    try {
+      const raw = read(data.target.value.replaceAll(' ', ''));
+      const decoded = decodeAttestationObjectData(raw);
+      this.attestationObjectData$.next({ raw, decoded });
+    } catch {}
+  }
+
+  readAuthenticatorData(data: Event) {
+    if (
+      !data.target ||
+      !('value' in data.target) ||
+      typeof data.target.value !== 'string'
+    ) {
+      return;
+    }
+    try {
+      const raw = read(data.target.value.replaceAll(' ', ''));
+      const decoded = decodeAuthenticatorData(raw);
+      this.authenticatorData$.next({ raw, decoded });
+    } catch {}
+  }
+
+  readAttestedCredentialData(data: Event) {
+    if (
+      !data.target ||
+      !('value' in data.target) ||
+      typeof data.target.value !== 'string'
+    ) {
+      return;
+    }
+    try {
+      const raw = read(data.target.value.replaceAll(' ', ''));
+      const decoded = decodeAttestedCredentialDataData(raw);
+      this.attestedCredentialData$.next({ raw, decoded });
+    } catch {}
   }
 
   getMetadata(
@@ -130,13 +176,26 @@ export class ManualAnalysisComponent implements OnInit, OnDestroy {
   }
 }
 
-function read(input: string): any {
-  console.log('reading', input);
+function read(input: string): Uint8Array {
+  if (isHex(input)) {
+    return decodeHex(input);
+  }
+
   return decodeBase64Url(input);
 }
 
+function isHex(input: string): boolean {
+  return /^[0-9a-fA-F]*$/.test(input);
+}
+
+function decodeHex(input: string): Uint8Array {
+  return new Uint8Array(
+    input.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+  );
+}
+
 function decodeAttestationObjectData(
-  input: string
+  input: Uint8Array
 ): DecodedAttestationObject | undefined {
   try {
     return decodeAttestationObject(input);
@@ -147,10 +206,22 @@ function decodeAttestationObjectData(
 }
 
 function decodeAuthenticatorDataData(
-  input: string
+  input: Uint8Array
 ): DecodedAuthenticatorData | undefined {
   try {
     return decodeAuthenticatorData(input);
+  } catch (error) {
+    console.error(error);
+    return undefined;
+  }
+}
+
+function decodeAttestedCredentialDataData(
+  input: Uint8Array
+): DecodedAttestedCredentialData | undefined {
+  try {
+    const reader = new BufferReader(input);
+    return decodeAttestedCredentialData(reader);
   } catch (error) {
     console.error(error);
     return undefined;

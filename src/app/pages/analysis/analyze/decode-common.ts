@@ -253,7 +253,7 @@ export function decodeAuthenticatorData(
   return result;
 }
 
-function decodeAttestedCredentialData(
+export function decodeAttestedCredentialData(
   reader: BufferReader
 ): DecodedAttestedCredentialData {
   const attestationMinLen = 16 + 2 + 16 + 42; // aaguid + credIdLen + credId + pk
