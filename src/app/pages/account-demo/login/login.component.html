@@ -18,6 +18,10 @@
       <input matInput [(ngModel)]="password" type="password" />
     </mat-form-field>
 
+    <mat-checkbox [(ngModel)]="conditionalCreate"
+      >Auto-register passkey</mat-checkbox
+    >
+
     <button mat-stroked-button (click)="login()">Log in</button>
 
     <hr />
