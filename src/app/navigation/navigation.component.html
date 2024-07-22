@@ -55,6 +55,20 @@
           </ul>
         </li>
 
+        <!-- PRF Demo -->
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link"
+            role="button"
+            routerLinkActive="active"
+            ariaCurrentWhenActive="page"
+            routerLink="/prf-demo"
+          >
+            PRF Demo
+          </a>
+        </li>
+
+        <!-- Account Demo -->
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -63,7 +77,7 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            Demo
+            Account Demo
           </a>
           <ul class="dropdown-menu">
             <li class="nav-item">
@@ -71,8 +85,18 @@
                 class="dropdown-item"
                 routerLinkActive="active"
                 ariaCurrentWhenActive="page"
-                routerLink="/prf-demo"
-                >PRF Demo</a
+                routerLink="/account-demo/login"
+                >Login</a
+              >
+            </li>
+
+            <li class="nav-item">
+              <a
+                class="dropdown-item"
+                routerLinkActive="active"
+                ariaCurrentWhenActive="page"
+                routerLink="/account-demo/manage"
+                >Manage</a
               >
             </li>
           </ul>

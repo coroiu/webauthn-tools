@@ -31,6 +31,20 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'account-demo/login',
+    loadComponent: () =>
+      import('./pages/account-demo/login/login.component').then(
+        (m) => m.LoginComponent
+      ),
+  },
+  {
+    path: 'account-demo/manage',
+    loadComponent: () =>
+      import('./pages/account-demo/manage/manage.component').then(
+        (m) => m.ManageComponent
+      ),
+  },
+  {
     path: 'security/existence-checker',
     loadComponent: () =>
       import(
