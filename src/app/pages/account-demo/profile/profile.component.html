@@ -3,6 +3,12 @@
   <p class="lead">This page represents a logged in view.</p>
 
   <h2>User: {{ username }}</h2>
+  <span class="text-success" *ngIf="createPasskey.success"
+    >A passkey was automatically registered</span
+  >
+  <span class="text-danger" *ngIf="createPasskey.error"
+    >Failed to create passkey: {{ createPasskey.error }}</span
+  >
 
   <h2>Browser capabilities</h2>
   <ul>

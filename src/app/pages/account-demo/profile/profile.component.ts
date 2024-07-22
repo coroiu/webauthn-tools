@@ -17,6 +17,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   protected username: string = '';
   protected capabilities: Capabilities = {};
+  protected createPasskey: { error?: string; success?: boolean } = {};
 
   constructor(private route: ActivatedRoute) {}
 
@@ -25,32 +26,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.username = params.get('username') || '';
     });
 
-    this.route.queryParamMap
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(async (params) => {
-        if (params.get('conditionalCreate') === 'true') {
-          this.autoCreatePasskey();
-        }
-      });
-  }
-
-  private async autoCreatePasskey() {
-    if ((PublicKeyCredential as any).getClientCapabilities === undefined) {
-      console.log('Conditional creation unavailable');
-      this.capabilities.conditionalCreate = false;
-      return;
-    }
-
-    const capabilities = await (
-      PublicKeyCredential as any
-    ).getClientCapabilities();
-    if (!capabilities.conditionalCreate) {
-      console.log('Conditional creation unavailable');
-      this.capabilities.conditionalCreate = false;
-      return;
-    }
-
-    this.capabilities.conditionalCreate = true;
+    // this.route.queryParamMap
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe(async (params) => {
+    //     if (params.get('conditionalCreate') === 'true') {
+    //       this.autoCreatePasskey();
+    //     }
+    //   });
   }
 
   ngOnDestroy(): void {
