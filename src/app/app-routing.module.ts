@@ -45,6 +45,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'account-demo/profile/:username',
+    loadComponent: () =>
+      import('./pages/account-demo/profile/profile.component').then(
+        (m) => m.ProfileComponent
+      ),
+  },
+  {
     path: 'security/existence-checker',
     loadComponent: () =>
       import(
