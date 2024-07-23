@@ -1,0 +1,34 @@
+<div class="page-container container-md">
+  <h1>Account Demo: Login</h1>
+  <p class="lead">Use this page to log in to an existing account.</p>
+
+  <div class="alert alert-primary" role="alert">
+    Use "Manage Accounts" to create a new account. All accounts are stored in
+    the browser's local storage.
+  </div>
+
+  <div class="login-form">
+    <mat-form-field>
+      <mat-label>Username</mat-label>
+      <input matInput [(ngModel)]="username" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Password</mat-label>
+      <input matInput [(ngModel)]="password" type="password" />
+    </mat-form-field>
+
+    <mat-checkbox [(ngModel)]="conditionalCreate"
+      >Auto-register passkey</mat-checkbox
+    >
+
+    <button mat-stroked-button (click)="login()">Log in</button>
+
+    <hr />
+
+    <button mat-fab extended>
+      <mat-icon>passkey</mat-icon>
+      Log in with Passkey
+    </button>
+  </div>
+</div>
